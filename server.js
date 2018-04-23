@@ -21,8 +21,6 @@ var server = app.listen(8000, function() {
 
 var io = require('socket.io').listen(server);
 
-
-var users = [];
 var comments = [];
 
 io.sockets.on('connection', function(socket){
@@ -52,19 +50,20 @@ io.sockets.on('connection', function(socket){
     socket.on( "reset_comments", function (data){
       
       console.log(data);
-
       comments = [];
-      
-      io.emit( 'comments', comments);
+      io.emit( 'reset_comments', comments);
       
     });
 
     
     
       socket.on("new_comment", function (data){
-        console.log(data);
-        comments.push(data);
-        io.emit('comments', comments);
+        console.log(data.user,data.comment);
+        
+        if(data.user){
+          comments.push(data);
+          io.emit('comments', comments);
+        }
       });
     
     

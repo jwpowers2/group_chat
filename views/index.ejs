@@ -3,7 +3,19 @@
 
 <head>
     <meta content-type: "application/json">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!-- Popper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Share+Tech" rel="stylesheet">
 
     
     
@@ -12,46 +24,59 @@
 
           $(document).ready(function (){
 
-            
-
             var socket  = io.connect();            
 
-           
-            // make a textarea with an id and a button with an id
+            var comments = [];
+
             $( '#login').click(function(){ 
-                console.log($('#usertext').val());
+                
                 localStorage.setItem('user',$('#usertext').val());
-                //socket.emit("new_user",$('#usertext').val());
+                
             });
 
 
              
             socket.on( 'users', function (data){
 
-              console.log( JSON.stringify(data));
               $('#users').text(JSON.stringify(data));
+
+            });
+
+            socket.on( 'reset_comments', function (data){
+              
+              $('#comments > tr').remove();
+              for(let i of comments){comments.pop();}
+              
+
             });
 
 
             $('#comment').click(function(){ 
-              //console.log($('#commenttext').val());
+              
               socket.emit("new_comment",{user:localStorage.getItem('user'),comment:$('#commenttext').val()});
+
             });
 
 
             $( '#reset_users').click(function(){ 
               
-              socket.emit("reset_users",true);
+              localStorage.setItem('user',null);
 
             });
 
 
             socket.on( 'comments', function (data){
+              
+              $('#comments').html('');
+              comments = [];
+              comments = data;
+              for (let i in data){
 
-              console.log( JSON.stringify(data));
-              $('#comments').text(JSON.stringify(data));
+                $('#comments').append("<tr><td>" + data[i].user + "</td><td>" + data[i].comment + "</td></tr>");
+
+              }
+
             });
-
 
             $( '#reset_comments').click(function(){ 
               
@@ -65,20 +90,41 @@
 
 </head>
 <body>
- 
+
+ <div class="col-md-3 sidebar">
+  <h2>Group Chat</h2>
+</div>
   
+<div class="container-fluid">
+<div class="row">
   <textarea id="usertext" name="usertext" id="name" placeholder="username"></textarea>
   <button id="login">login</button>
   <button id="reset_users">reset users</button>
-
-  <div id="users"></div>
+</div>
+<div class="row">  
 
   <textarea id="commenttext" name="commenttext" id="commenttext" placeholder="comment"></textarea>
   <button id="comment">new comment</button>
 
   <button id="reset_comments">reset comments</button>
 
-  <div id="comments"></div>
+</div>
+<div class="col-md-9 col-md-offset-3 content">
+
+  
+  <table class="table table-striped">
+
+    <div id="comments"><div>
+
+    </table>
+
+</div>
+</div>
+
+
+
+
+
 
 </body>
 
