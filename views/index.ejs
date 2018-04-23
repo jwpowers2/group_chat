@@ -1,0 +1,52 @@
+
+<html>
+
+<head>
+    <meta content-type: "application/json">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    
+    
+    <script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type ="text/javascript">
+
+          $(document).ready(function (){
+
+            
+
+            var socket  = io.connect();            
+
+           
+            // make a textarea with an id and a button with an id
+            $( '#login').click(function(){ 
+                console.log($('#usertext').val());
+                socket.emit("new_user",$('#usertext').val());
+            });
+
+
+             
+            socket.on( 'users', function (data){
+
+              console.log( JSON.stringify(data));
+              $('#users').text(JSON.stringify(data));
+            });
+
+             
+          })
+
+    </script>
+
+</head>
+<body>
+ 
+  
+  <textarea id="usertext" name="usertext" id="name" placeholder="username"></textarea>
+  <button id="login">login</button>
+  
+
+  <div id="users"></div>
+
+
+</body>
+
+</html>
