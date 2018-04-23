@@ -23,6 +23,7 @@ var io = require('socket.io').listen(server);
 
 
 var users = [];
+var comments = [];
 
 io.sockets.on('connection', function(socket){
   console.log("Client/socket is connected");
@@ -35,14 +36,38 @@ io.sockets.on('connection', function(socket){
       users.push({'user':data,'hash':socket.id});
       
       io.emit( 'users', users);
-
+      
     });
-    /*
-    socket.on("reset", function (data){
-      count = 0;
-      io.emit('count', count);
-    })
-    */
+
+    socket.on( "reset_users", function (data){
+      
+      console.log(data);
+
+      users = [];
+      
+      io.emit( 'users', users);
+      
+    });
+
+    socket.on( "reset_comments", function (data){
+      
+      console.log(data);
+
+      comments = [];
+      
+      io.emit( 'comments', comments);
+      
+    });
+
+    
+    
+      socket.on("new_comment", function (data){
+        console.log(data);
+        comments.push(data);
+        io.emit('comments', comments);
+      });
+    
+    
 });
 
 

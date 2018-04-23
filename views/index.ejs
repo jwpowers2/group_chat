@@ -20,7 +20,8 @@
             // make a textarea with an id and a button with an id
             $( '#login').click(function(){ 
                 console.log($('#usertext').val());
-                socket.emit("new_user",$('#usertext').val());
+                localStorage.setItem('user',$('#usertext').val());
+                //socket.emit("new_user",$('#usertext').val());
             });
 
 
@@ -31,6 +32,32 @@
               $('#users').text(JSON.stringify(data));
             });
 
+
+            $('#comment').click(function(){ 
+              //console.log($('#commenttext').val());
+              socket.emit("new_comment",{user:localStorage.getItem('user'),comment:$('#commenttext').val()});
+            });
+
+
+            $( '#reset_users').click(function(){ 
+              
+              socket.emit("reset_users",true);
+
+            });
+
+
+            socket.on( 'comments', function (data){
+
+              console.log( JSON.stringify(data));
+              $('#comments').text(JSON.stringify(data));
+            });
+
+
+            $( '#reset_comments').click(function(){ 
+              
+              socket.emit("reset_comments",true);
+              
+            });
              
           })
 
@@ -42,10 +69,16 @@
   
   <textarea id="usertext" name="usertext" id="name" placeholder="username"></textarea>
   <button id="login">login</button>
-  
+  <button id="reset_users">reset users</button>
 
   <div id="users"></div>
 
+  <textarea id="commenttext" name="commenttext" id="commenttext" placeholder="comment"></textarea>
+  <button id="comment">new comment</button>
+
+  <button id="reset_comments">reset comments</button>
+
+  <div id="comments"></div>
 
 </body>
 
